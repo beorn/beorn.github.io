@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>bjorn@dev ~ $</title>
+  <meta name="description" content="Bjorn Stabell - software engineer building terminal UIs, developer tools, and agentic systems.">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #00ff41;
+      --dim-green: #00aa2a;
+      --bright-green: #33ff66;
+      --cyan: #00d4ff;
+      --yellow: #ffdd00;
+      --red: #ff3333;
+      --magenta: #ff44cc;
+      --bg: #0a0a0a;
+      --bg-light: #111111;
+      --border: #1a3a1a;
+      --comment: #4a7a4a;
+      --font: 'Fira Code', 'SF Mono', 'Cascadia Code', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--green);
+      font-family: var(--font);
+      font-size: 14px;
+      line-height: 1.7;
+      min-height: 100vh;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* Scanline overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.08) 2px,
+        rgba(0, 0, 0, 0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* CRT glow */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.4) 100%);
+      pointer-events: none;
+      z-index: 99;
+    }
+
+    .terminal {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 20px 24px 40px;
+    }
+
+    /* Window chrome */
+    .window-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      margin-top: 32px;
+    }
+
+    .window-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .window-dot.red { background: #ff5f57; }
+    .window-dot.yellow { background: #febc2e; }
+    .window-dot.green { background: #28c840; }
+
+    .window-title {
+      flex: 1;
+      text-align: center;
+      font-size: 12px;
+      color: var(--comment);
+    }
+
+    .window-body {
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      padding: 24px 28px 32px;
+      background: var(--bg);
+    }
+
+    /* Prompt styling */
+    .prompt { margin-bottom: 4px; }
+
+    .prompt-user { color: var(--cyan); }
+    .prompt-at { color: var(--comment); }
+    .prompt-host { color: var(--magenta); }
+    .prompt-dir { color: var(--yellow); }
+    .prompt-symbol { color: var(--green); }
+
+    .cmd { color: #ffffff; }
+
+    .output {
+      margin-bottom: 24px;
+      padding-left: 0;
+    }
+
+    .comment {
+      color: var(--comment);
+      font-style: italic;
+    }
+
+    /* whoami section */
+    .ascii-name {
+      color: var(--bright-green);
+      line-height: 1.2;
+      margin: 8px 0;
+      font-size: 11px;
+    }
+
+    .info-line {
+      color: var(--dim-green);
+    }
+
+    .info-line .label {
+      color: var(--cyan);
+      display: inline-block;
+      min-width: 120px;
+    }
+
+    .info-line .value {
+      color: var(--green);
+    }
+
+    .info-line a {
+      color: var(--cyan);
+      text-decoration: none;
+    }
+
+    .info-line a:hover {
+      color: var(--bright-green);
+      text-decoration: underline;
+    }
+
+    /* ls output */
+    .ls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 0;
+    }
+
+    .ls-entry {
+      display: block;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.1s;
+    }
+
+    .ls-entry:hover {
+      background: rgba(0, 255, 65, 0.03);
+    }
+
+    .ls-entry:last-child { border-bottom: none; }
+
+    .ls-name {
+      color: var(--bright-green);
+      font-weight: 600;
+    }
+
+    .ls-name.dir::before {
+      content: 'drwxr-xr-x  ';
+      color: var(--comment);
+      font-weight: 400;
+    }
+
+    .ls-desc {
+      color: var(--comment);
+      font-size: 12px;
+      margin-top: 2px;
+      padding-left: 14ch;
+    }
+
+    .ls-tags {
+      padding-left: 14ch;
+      margin-top: 3px;
+    }
+
+    .ls-tag {
+      color: var(--dim-green);
+      font-size: 11px;
+    }
+
+    .ls-tag::before { content: '#'; color: var(--comment); }
+
+    .ls-tag + .ls-tag { margin-left: 8px; }
+
+    /* Separator */
+    .sep {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 8px 0;
+    }
+
+    /* Blinking cursor */
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 16px;
+      background: var(--green);
+      vertical-align: text-bottom;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 32px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .footer-text {
+      color: var(--comment);
+      font-size: 12px;
+    }
+
+    .footer-text a {
+      color: var(--dim-green);
+      text-decoration: none;
+    }
+
+    .footer-text a:hover {
+      color: var(--green);
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      body { font-size: 12px; }
+      .terminal { padding: 12px 8px 24px; }
+      .window-body { padding: 16px 14px 24px; }
+      .ascii-name { font-size: 8px; }
+      .ls-desc, .ls-tags { padding-left: 0; }
+      .ls-name.dir::before { content: 'd  '; }
+      .info-line .label { min-width: 80px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="terminal">
+
+  <!-- Window chrome -->
+  <div class="window-bar">
+    <div class="window-dot red"></div>
+    <div class="window-dot yellow"></div>
+    <div class="window-dot green"></div>
+    <div class="window-title">bjorn@dev ~ zsh</div>
+  </div>
+
+  <div class="window-body">
+
+    <!-- whoami -->
+    <div class="prompt">
+      <span class="prompt-user">bjorn</span><span class="prompt-at">@</span><span class="prompt-host">dev</span> <span class="prompt-dir">~</span> <span class="prompt-symbol">$</span> <span class="cmd">whoami</span>
+    </div>
+    <div class="output">
+<pre class="ascii-name">
+ _     _                        _        _          _ _
+| |__ (_) ___  _ __ _ __    ___| |_ __ _| |__   ___| | |
+| '_ \| |/ _ \| '__| '_ \  / __| __/ _` | '_ \ / _ \ | |
+| |_) | | (_) | |  | | | | \__ \ || (_| | |_) |  __/ | |
+|_.__// |\___/|_|  |_| |_| |___/\__\__,_|_.__/ \___|_|_|
+    |__/
+</pre>
+      <div class="info-line"><span class="label">role</span> <span class="value">software engineer</span></div>
+      <div class="info-line"><span class="label">focus</span> <span class="value">terminal UIs, developer tools, agentic systems</span></div>
+      <div class="info-line"><span class="label">github</span> <a href="https://github.com/beorn" target="_blank" rel="noopener">github.com/beorn</a></div>
+    </div>
+
+    <hr class="sep">
+
+    <!-- cat about.txt -->
+    <div class="prompt">
+      <span class="prompt-user">bjorn</span><span class="prompt-at">@</span><span class="prompt-host">dev</span> <span class="prompt-dir">~</span> <span class="prompt-symbol">$</span> <span class="cmd">cat about.txt</span>
+    </div>
+    <div class="output">
+      <p>I write software for the command line -- tools that stay out of your way
+and do exactly what you need. My current focus is the terminal UI layer:
+making it fast, composable, and testable.</p>
+    </div>
+
+    <hr class="sep">
+
+    <!-- ls projects/terminal-ecosystem/ -->
+    <div class="prompt">
+      <span class="prompt-user">bjorn</span><span class="prompt-at">@</span><span class="prompt-host">dev</span> <span class="prompt-dir">~</span> <span class="prompt-symbol">$</span> <span class="cmd">ls -la projects/terminal-ecosystem/</span>
+    </div>
+    <div class="output">
+      <div class="comment">## terminal ecosystem</div>
+
+      <a class="ls-entry" href="https://hightea.dev" target="_blank" rel="noopener">
+        <div class="ls-name dir">hightea/</div>
+        <div class="ls-desc">React for modern terminals -- layout feedback, mouse, images, 100x+ faster incremental updates, zero WASM.</div>
+        <div class="ls-tags">
+          <span class="ls-tag">TypeScript</span>
+          <span class="ls-tag">React</span>
+          <span class="ls-tag">TUI</span>
+        </div>
+      </a>
+
+      <a class="ls-entry" href="https://github.com/beorn/flexture" target="_blank" rel="noopener">
+        <div class="ls-name dir">flexture/</div>
+        <div class="ls-desc">Pure JavaScript flexbox layout engine -- Yoga-compatible API, 2.5x faster initial layout, 5.5x faster re-layout, zero WASM.</div>
+        <div class="ls-tags">
+          <span class="ls-tag">TypeScript</span>
+          <span class="ls-tag">Layout</span>
+          <span class="ls-tag">Flexbox</span>
+        </div>
+      </a>
+
+      <a class="ls-entry" href="https://termless.dev" target="_blank" rel="noopener">
+        <div class="ls-name dir">termless/</div>
+        <div class="ls-desc">Headless terminal library for cross-terminal TUI testing -- run your TUI in CI without a real terminal.</div>
+        <div class="ls-tags">
+          <span class="ls-tag">TypeScript</span>
+          <span class="ls-tag">Testing</span>
+          <span class="ls-tag">Terminal</span>
+        </div>
+      </a>
+
+      <a class="ls-entry" href="https://github.com/beorn/swatch" target="_blank" rel="noopener">
+        <div class="ls-name dir">swatch/</div>
+        <div class="ls-desc">Universal color themes for any platform -- terminal, web, and native apps from a single theme definition.</div>
+        <div class="ls-tags">
+          <span class="ls-tag">TypeScript</span>
+          <span class="ls-tag">Theming</span>
+          <span class="ls-tag">Color</span>
+        </div>
+      </a>
+    </div>
+
+    <hr class="sep">
+
+    <!-- ls projects/applications/ -->
+    <div class="prompt">
+      <span class="prompt-user">bjorn</span><span class="prompt-at">@</span><span class="prompt-host">dev</span> <span class="prompt-dir">~</span> <span class="prompt-symbol">$</span> <span class="cmd">ls -la projects/applications/</span>
+    </div>
+    <div class="output">
+      <div class="comment">## applications</div>
+
+      <a class="ls-entry" href="https://github.com/beorn/pim" target="_blank" rel="noopener">
+        <div class="ls-name dir">km/</div>
+        <div class="ls-desc">Knowledge Machine -- unified notes, tasks, and calendar TUI with full history and bidirectional markdown sync.</div>
+        <div class="ls-tags">
+          <span class="ls-tag">TypeScript</span>
+          <span class="ls-tag">Bun</span>
+          <span class="ls-tag">SQLite</span>
+          <span class="ls-tag">TUI</span>
+        </div>
+      </a>
+
+      <a class="ls-entry" href="https://github.com/beorn/pim" target="_blank" rel="noopener">
+        <div class="ls-name dir">pam/</div>
+        <div class="ls-desc">Personal Assistant Machine -- multi-channel AI assistant with CRDT sandboxing for safe, composable automation.</div>
+        <div class="ls-tags">
+          <span class="ls-tag">TypeScript</span>
+          <span class="ls-tag">AI</span>
+          <span class="ls-tag">CRDT</span>
+        </div>
+      </a>
+
+      <a class="ls-entry" href="https://github.com/beorn/pim" target="_blank" rel="noopener">
+        <div class="ls-name dir">cloudi/</div>
+        <div class="ls-desc">Claude AI chat CLI and autonomous mail bot -- conversation in the terminal, with background agents that handle email.</div>
+        <div class="ls-tags">
+          <span class="ls-tag">TypeScript</span>
+          <span class="ls-tag">Claude_API</span>
+          <span class="ls-tag">Gmail</span>
+        </div>
+      </a>
+    </div>
+
+    <hr class="sep">
+
+    <!-- Final prompt -->
+    <div class="prompt">
+      <span class="prompt-user">bjorn</span><span class="prompt-at">@</span><span class="prompt-host">dev</span> <span class="prompt-dir">~</span> <span class="prompt-symbol">$</span> <span class="cursor"></span>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p class="footer-text">
+        <a href="https://github.com/beorn">github.com/beorn</a>
+      </p>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

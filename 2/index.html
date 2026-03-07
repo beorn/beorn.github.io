@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bjørn Stabell</title>
+  <meta name="description" content="Bjørn Stabell — software engineer building terminal UIs, developer tools, and agentic systems.">
+  <style>
+    :root {
+      --bg:       #0d1117;
+      --bg-card:  #161b22;
+      --bg-hover: #1c2330;
+      --border:   #30363d;
+      --accent:   #58a6ff;
+      --accent2:  #3fb950;
+      --text:     #e6edf3;
+      --muted:    #7d8590;
+      --tag-bg:   #1f2937;
+      --tag-text: #94a3b8;
+      --radius:   8px;
+      --font-mono: "Berkeley Mono", "Fira Code", "JetBrains Mono", "Cascadia Code",
+                   "Source Code Pro", ui-monospace, monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
+                   Arial, sans-serif;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* ── Layout ── */
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Header ── */
+
+    header {
+      padding: 80px 0 64px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: flex-start;
+      gap: 40px;
+    }
+
+    .avatar {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      flex-shrink: 0;
+      background: var(--bg-card);
+      overflow: hidden;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .header-text {
+      flex: 1;
+    }
+
+    .prompt {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--accent2);
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+
+    .prompt::before { content: "$ "; color: var(--muted); }
+
+    h1 {
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      line-height: 1.1;
+    }
+
+    .tagline {
+      margin-top: 10px;
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 520px;
+    }
+
+    .social-links {
+      margin-top: 20px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .social-links a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 14px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .social-links a:hover {
+      color: var(--text);
+      border-color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* ── Sections ── */
+
+    section {
+      padding: 56px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    section:last-of-type {
+      border-bottom: none;
+    }
+
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .section-label::before { content: "// "; }
+
+    h2 {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 12px;
+    }
+
+    /* ── About ── */
+
+    .about-text {
+      color: var(--text);
+      max-width: 640px;
+      font-size: 16px;
+    }
+
+    .about-text p + p {
+      margin-top: 14px;
+    }
+
+    /* ── Projects ── */
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 16px;
+      margin-top: 4px;
+    }
+
+    .project-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: border-color 0.15s, background 0.15s;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .project-card:hover {
+      border-color: var(--accent);
+      background: var(--bg-hover);
+      text-decoration: none;
+    }
+
+    .project-card.featured {
+      border-color: #21262d;
+    }
+
+    .project-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .project-icon {
+      font-size: 20px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .project-name {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .project-links {
+      margin-left: auto;
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .project-links a {
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2px 10px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .project-links a:hover {
+      color: var(--text);
+      border-color: var(--muted);
+      text-decoration: none;
+    }
+
+    .project-desc {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .project-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      border-radius: 4px;
+      padding: 2px 8px;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Section divider for other projects ── */
+
+    .projects-label {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--muted);
+      margin: 32px 0 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── Footer ── */
+
+    footer {
+      padding: 36px 0;
+      text-align: center;
+    }
+
+    footer p {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    footer p span {
+      color: var(--border);
+      margin: 0 8px;
+    }
+
+    /* ── Responsive ── */
+
+    @media (max-width: 600px) {
+      header { padding: 48px 0 40px; }
+
+      .header-inner {
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .avatar { width: 72px; height: 72px; }
+
+      .projects-grid {
+        grid-template-columns: 1fr;
+      }
+
+      section { padding: 40px 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Header -->
+    <header>
+      <div class="header-inner">
+        <div class="avatar">
+          <img src="https://github.com/beorn.png" alt="Bjørn Stabell" loading="lazy">
+        </div>
+        <div class="header-text">
+          <div class="prompt">whoami</div>
+          <h1>Bjørn Stabell</h1>
+          <p class="tagline">
+            Software engineer building terminal UIs, developer tools, and agentic systems.
+          </p>
+          <div class="social-links">
+            <a href="https://github.com/beorn" target="_blank" rel="noopener">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+              </svg>
+              github.com/beorn
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- About -->
+    <section id="about">
+      <div class="section-label">about</div>
+      <div class="about-text">
+        <p>
+          I write software for the command line — tools that stay out of your way and do exactly
+          what you need. My current focus is the terminal UI layer: making it fast, composable,
+          and testable.
+        </p>
+        <p>
+          Most of my open-source work lives in the terminal ecosystem: a React-based TUI framework,
+          a pure-JS flexbox engine, a headless terminal library for testing, and a universal color
+          theme system. On top of that I'm building <strong>km</strong> — a knowledge machine for
+          agentic knowledge workers.
+        </p>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects">
+      <div class="section-label">projects</div>
+
+      <div class="projects-label">terminal ecosystem</div>
+
+      <div class="projects-grid">
+
+        <a class="project-card featured" href="https://hightea.dev" target="_blank" rel="noopener">
+          <div class="project-header">
+            <span class="project-icon">🍵</span>
+            <span class="project-name">hightea</span>
+            <div class="project-links">
+              <a href="https://hightea.dev" target="_blank" rel="noopener" onclick="event.stopPropagation()">docs</a>
+              <a href="https://github.com/beorn/hightea" target="_blank" rel="noopener" onclick="event.stopPropagation()">gh</a>
+            </div>
+          </div>
+          <p class="project-desc">
+            React for modern terminals — layout feedback, mouse, images, 100x+ faster incremental
+            updates, zero WASM.
+          </p>
+          <div class="project-tags">
+            <span class="tag">TypeScript</span>
+            <span class="tag">React</span>
+            <span class="tag">TUI</span>
+          </div>
+        </a>
+
+        <a class="project-card featured" href="https://github.com/beorn/flexture" target="_blank" rel="noopener">
+          <div class="project-header">
+            <span class="project-icon">📐</span>
+            <span class="project-name">flexture</span>
+            <div class="project-links">
+              <a href="https://beorn.github.io/flexture" target="_blank" rel="noopener" onclick="event.stopPropagation()">docs</a>
+              <a href="https://github.com/beorn/flexture" target="_blank" rel="noopener" onclick="event.stopPropagation()">gh</a>
+            </div>
+          </div>
+          <p class="project-desc">
+            Pure JavaScript flexbox layout engine — Yoga-compatible API, 2.5x faster initial
+            layout, 5.5x faster re-layout, zero WASM.
+          </p>
+          <div class="project-tags">
+            <span class="tag">TypeScript</span>
+            <span class="tag">Layout</span>
+            <span class="tag">Flexbox</span>
+          </div>
+        </a>
+
+        <a class="project-card featured" href="https://termless.dev" target="_blank" rel="noopener">
+          <div class="project-header">
+            <span class="project-icon">🖥</span>
+            <span class="project-name">termless</span>
+            <div class="project-links">
+              <a href="https://termless.dev" target="_blank" rel="noopener" onclick="event.stopPropagation()">docs</a>
+              <a href="https://github.com/beorn/termless" target="_blank" rel="noopener" onclick="event.stopPropagation()">gh</a>
+            </div>
+          </div>
+          <p class="project-desc">
+            Headless terminal library for cross-terminal TUI testing — run your TUI in CI without
+            a real terminal.
+          </p>
+          <div class="project-tags">
+            <span class="tag">TypeScript</span>
+            <span class="tag">Testing</span>
+            <span class="tag">Terminal</span>
+          </div>
+        </a>
+
+        <a class="project-card featured" href="https://github.com/beorn/swatch" target="_blank" rel="noopener">
+          <div class="project-header">
+            <span class="project-icon">🎨</span>
+            <span class="project-name">swatch</span>
+            <div class="project-links">
+              <a href="https://beorn.github.io/swatch" target="_blank" rel="noopener" onclick="event.stopPropagation()">docs</a>
+              <a href="https://github.com/beorn/swatch" target="_blank" rel="noopener" onclick="event.stopPropagation()">gh</a>
+            </div>
+          </div>
+          <p class="project-desc">
+            Universal color themes for any platform — terminal, web, and native apps from a
+            single theme definition.
+          </p>
+          <div class="project-tags">
+            <span class="tag">TypeScript</span>
+            <span class="tag">Theming</span>
+            <span class="tag">Color</span>
+          </div>
+        </a>
+
+      </div>
+
+      <div class="projects-label" style="margin-top:40px;">applications</div>
+
+      <div class="projects-grid">
+
+        <a class="project-card" href="https://github.com/beorn/pim" target="_blank" rel="noopener">
+          <div class="project-header">
+            <span class="project-icon">🧠</span>
+            <span class="project-name">km</span>
+            <div class="project-links">
+              <a href="https://github.com/beorn/pim" target="_blank" rel="noopener" onclick="event.stopPropagation()">gh</a>
+            </div>
+          </div>
+          <p class="project-desc">
+            Knowledge Machine — unified notes, tasks, and calendar TUI with full history and
+            bidirectional markdown sync. Built for agentic knowledge workers.
+          </p>
+          <div class="project-tags">
+            <span class="tag">TypeScript</span>
+            <span class="tag">Bun</span>
+            <span class="tag">SQLite</span>
+            <span class="tag">TUI</span>
+          </div>
+        </a>
+
+        <a class="project-card" href="https://github.com/beorn/pim" target="_blank" rel="noopener">
+          <div class="project-header">
+            <span class="project-icon">🤖</span>
+            <span class="project-name">pam</span>
+            <div class="project-links">
+              <a href="https://github.com/beorn/pim" target="_blank" rel="noopener" onclick="event.stopPropagation()">gh</a>
+            </div>
+          </div>
+          <p class="project-desc">
+            Personal Assistant Machine — multi-channel AI assistant with CRDT sandboxing for
+            safe, composable automation.
+          </p>
+          <div class="project-tags">
+            <span class="tag">TypeScript</span>
+            <span class="tag">AI</span>
+            <span class="tag">CRDT</span>
+          </div>
+        </a>
+
+        <a class="project-card" href="https://github.com/beorn/pim" target="_blank" rel="noopener">
+          <div class="project-header">
+            <span class="project-icon">✉️</span>
+            <span class="project-name">cloudi</span>
+            <div class="project-links">
+              <a href="https://github.com/beorn/pim" target="_blank" rel="noopener" onclick="event.stopPropagation()">gh</a>
+            </div>
+          </div>
+          <p class="project-desc">
+            Claude AI chat CLI and autonomous mail bot — conversation in the terminal, with
+            background agents that handle email.
+          </p>
+          <div class="project-tags">
+            <span class="tag">TypeScript</span>
+            <span class="tag">Claude API</span>
+            <span class="tag">Gmail</span>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <div class="container">
+      <p>
+        Bjørn Stabell
+        <span>·</span>
+        <a href="https://github.com/beorn">github.com/beorn</a>
+        <span>·</span>
+        beorn.codes
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>

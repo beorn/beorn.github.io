@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bjorn Stabell</title>
+  <meta name="description" content="Bjorn Stabell - software engineer building terminal UIs, developer tools, and agentic systems.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0b;
+      --surface: rgba(255, 255, 255, 0.03);
+      --surface-hover: rgba(255, 255, 255, 0.06);
+      --glass: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-border-hover: rgba(255, 255, 255, 0.15);
+      --text: #ededed;
+      --text-secondary: #888888;
+      --text-muted: #555555;
+      --accent: #3291ff;
+      --accent-glow: rgba(50, 145, 255, 0.15);
+      --green: #50e3c2;
+      --purple: #7928ca;
+      --pink: #ff0080;
+      --orange: #f5a623;
+      --radius: 16px;
+      --radius-sm: 8px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Gradient background orbs */
+    .bg-gradient {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    .bg-gradient .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.3;
+    }
+
+    .bg-gradient .orb-1 {
+      width: 600px;
+      height: 600px;
+      background: var(--purple);
+      top: -200px;
+      right: -100px;
+      opacity: 0.15;
+    }
+
+    .bg-gradient .orb-2 {
+      width: 500px;
+      height: 500px;
+      background: var(--accent);
+      bottom: -150px;
+      left: -100px;
+      opacity: 0.1;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    a:hover { color: var(--text); }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 100px 0 80px;
+      text-align: center;
+    }
+
+    .avatar {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      margin: 0 auto 28px;
+      overflow: hidden;
+      border: 2px solid var(--glass-border);
+      box-shadow: 0 0 60px var(--accent-glow);
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    h1 {
+      font-size: clamp(32px, 5vw, 48px);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      background: linear-gradient(135deg, var(--text) 0%, var(--text-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-tagline {
+      margin-top: 16px;
+      font-size: 18px;
+      color: var(--text-secondary);
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-links {
+      margin-top: 28px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--text);
+      color: var(--bg);
+    }
+
+    .btn-primary:hover {
+      background: var(--text-secondary);
+      color: var(--bg);
+    }
+
+    .btn-ghost {
+      background: var(--glass);
+      color: var(--text-secondary);
+      border: 1px solid var(--glass-border);
+    }
+
+    .btn-ghost:hover {
+      background: var(--surface-hover);
+      color: var(--text);
+      border-color: var(--glass-border-hover);
+    }
+
+    .btn svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    /* Section */
+    .section {
+      padding: 60px 0;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, var(--glass-border), transparent);
+    }
+
+    /* Project cards */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: border-color 0.25s, background 0.25s, box-shadow 0.25s, transform 0.25s;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .card:hover {
+      border-color: var(--glass-border-hover);
+      background: var(--surface-hover);
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .card-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .card-icon.tui { background: linear-gradient(135deg, rgba(80, 227, 194, 0.2), rgba(50, 145, 255, 0.2)); }
+    .card-icon.layout { background: linear-gradient(135deg, rgba(245, 166, 35, 0.2), rgba(255, 0, 128, 0.2)); }
+    .card-icon.test { background: linear-gradient(135deg, rgba(121, 40, 202, 0.2), rgba(50, 145, 255, 0.2)); }
+    .card-icon.theme { background: linear-gradient(135deg, rgba(255, 0, 128, 0.2), rgba(245, 166, 35, 0.2)); }
+    .card-icon.brain { background: linear-gradient(135deg, rgba(50, 145, 255, 0.2), rgba(121, 40, 202, 0.2)); }
+    .card-icon.bot { background: linear-gradient(135deg, rgba(80, 227, 194, 0.2), rgba(121, 40, 202, 0.2)); }
+    .card-icon.mail { background: linear-gradient(135deg, rgba(255, 0, 128, 0.2), rgba(50, 145, 255, 0.2)); }
+
+    .card-name {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .card-badge {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--green);
+      background: rgba(80, 227, 194, 0.1);
+      padding: 2px 8px;
+      border-radius: 100px;
+    }
+
+    .card-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      flex: 1;
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: var(--surface);
+      border: 1px solid var(--glass-border);
+      padding: 3px 10px;
+      border-radius: 100px;
+    }
+
+    /* About card */
+    .about-card {
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 32px;
+    }
+
+    .about-text {
+      font-size: 15px;
+      color: var(--text-secondary);
+      max-width: 600px;
+      line-height: 1.7;
+    }
+
+    .about-text p + p { margin-top: 14px; }
+
+    .about-text strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* Footer */
+    footer {
+      padding: 48px 0;
+      text-align: center;
+    }
+
+    .footer-text {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .footer-text a { color: var(--text-secondary); }
+    .footer-text a:hover { color: var(--text); }
+
+    .footer-sep { margin: 0 10px; }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .hero { padding: 64px 0 48px; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .section { padding: 40px 0; }
+      .about-card { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-gradient">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+
+  <div class="container">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="avatar">
+        <img src="https://github.com/beorn.png" alt="Bjorn Stabell" loading="lazy">
+      </div>
+      <h1>Bjorn Stabell</h1>
+      <p class="hero-tagline">
+        Software engineer building terminal UIs, developer tools, and agentic systems.
+      </p>
+      <div class="hero-links">
+        <a href="https://github.com/beorn" class="btn btn-primary" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
+        <a href="#projects" class="btn btn-ghost">View Projects</a>
+      </div>
+    </div>
+
+    <!-- About -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">About</span>
+        <div class="section-line"></div>
+      </div>
+      <div class="about-card">
+        <div class="about-text">
+          <p>
+            I write software for the command line -- tools that stay out of your way and do exactly
+            what you need. My current focus is the terminal UI layer: making it fast, composable,
+            and testable.
+          </p>
+          <p>
+            Most of my open-source work lives in the terminal ecosystem: a React-based TUI framework,
+            a pure-JS flexbox engine, a headless terminal library for testing, and a universal color
+            theme system. On top of that I'm building <strong>km</strong> -- a knowledge machine for
+            agentic knowledge workers.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Projects -->
+    <div class="section" id="projects">
+      <div class="section-header">
+        <span class="section-title">Terminal Ecosystem</span>
+        <div class="section-line"></div>
+      </div>
+
+      <div class="cards-grid">
+
+        <a class="card" href="https://hightea.dev" target="_blank" rel="noopener">
+          <div class="card-header">
+            <div class="card-icon tui">🍵</div>
+            <div class="card-name">hightea</div>
+            <div class="card-badge">Featured</div>
+          </div>
+          <p class="card-desc">
+            React for modern terminals -- layout feedback, mouse, images, 100x+ faster incremental updates, zero WASM.
+          </p>
+          <div class="card-tags">
+            <span class="tag">TypeScript</span>
+            <span class="tag">React</span>
+            <span class="tag">TUI</span>
+          </div>
+        </a>
+
+        <a class="card" href="https://github.com/beorn/flexture" target="_blank" rel="noopener">
+          <div class="card-header">
+            <div class="card-icon layout">📐</div>
+            <div class="card-name">flexture</div>
+          </div>
+          <p class="card-desc">
+            Pure JavaScript flexbox layout engine -- Yoga-compatible API, 2.5x faster initial layout, 5.5x faster re-layout, zero WASM.
+          </p>
+          <div class="card-tags">
+            <span class="tag">TypeScript</span>
+            <span class="tag">Layout</span>
+            <span class="tag">Flexbox</span>
+          </div>
+        </a>
+
+        <a class="card" href="https://termless.dev" target="_blank" rel="noopener">
+          <div class="card-header">
+            <div class="card-icon test">🖥</div>
+            <div class="card-name">termless</div>
+          </div>
+          <p class="card-desc">
+            Headless terminal library for cross-terminal TUI testing -- run your TUI in CI without a real terminal.
+          </p>
+          <div class="card-tags">
+            <span class="tag">TypeScript</span>
+            <span class="tag">Testing</span>
+            <span class="tag">Terminal</span>
+          </div>
+        </a>
+
+        <a class="card" href="https://github.com/beorn/swatch" target="_blank" rel="noopener">
+          <div class="card-header">
+            <div class="card-icon theme">🎨</div>
+            <div class="card-name">swatch</div>
+          </div>
+          <p class="card-desc">
+            Universal color themes for any platform -- terminal, web, and native apps from a single theme definition.
+          </p>
+          <div class="card-tags">
+            <span class="tag">TypeScript</span>
+            <span class="tag">Theming</span>
+            <span class="tag">Color</span>
+          </div>
+        </a>
+
+      </div>
+
+      <div style="margin-top: 48px;">
+        <div class="section-header">
+          <span class="section-title">Applications</span>
+          <div class="section-line"></div>
+        </div>
+
+        <div class="cards-grid">
+
+          <a class="card" href="https://github.com/beorn/pim" target="_blank" rel="noopener">
+            <div class="card-header">
+              <div class="card-icon brain">🧠</div>
+              <div class="card-name">km</div>
+            </div>
+            <p class="card-desc">
+              Knowledge Machine -- unified notes, tasks, and calendar TUI with full history and bidirectional markdown sync. Built for agentic knowledge workers.
+            </p>
+            <div class="card-tags">
+              <span class="tag">TypeScript</span>
+              <span class="tag">Bun</span>
+              <span class="tag">SQLite</span>
+              <span class="tag">TUI</span>
+            </div>
+          </a>
+
+          <a class="card" href="https://github.com/beorn/pim" target="_blank" rel="noopener">
+            <div class="card-header">
+              <div class="card-icon bot">🤖</div>
+              <div class="card-name">pam</div>
+            </div>
+            <p class="card-desc">
+              Personal Assistant Machine -- multi-channel AI assistant with CRDT sandboxing for safe, composable automation.
+            </p>
+            <div class="card-tags">
+              <span class="tag">TypeScript</span>
+              <span class="tag">AI</span>
+              <span class="tag">CRDT</span>
+            </div>
+          </a>
+
+          <a class="card" href="https://github.com/beorn/pim" target="_blank" rel="noopener">
+            <div class="card-header">
+              <div class="card-icon mail">✉️</div>
+              <div class="card-name">cloudi</div>
+            </div>
+            <p class="card-desc">
+              Claude AI chat CLI and autonomous mail bot -- conversation in the terminal, with background agents that handle email.
+            </p>
+            <div class="card-tags">
+              <span class="tag">TypeScript</span>
+              <span class="tag">Claude API</span>
+              <span class="tag">Gmail</span>
+            </div>
+          </a>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="container">
+      <p class="footer-text">
+        Bjorn Stabell
+        <span class="footer-sep">&middot;</span>
+        <a href="https://github.com/beorn" target="_blank" rel="noopener">github.com/beorn</a>
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>

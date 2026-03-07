@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bjorn Stabell -- Selected Projects</title>
+  <meta name="description" content="Bjorn Stabell - software engineer building terminal UIs, developer tools, and agentic systems.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #fffff8;
+      --text: #1a1a1a;
+      --text-secondary: #555555;
+      --text-light: #888888;
+      --accent: #8b0000;
+      --rule: #cccccc;
+      --rule-light: #e0e0e0;
+      --font-serif: Georgia, 'Times New Roman', 'Palatino Linotype', serif;
+      --font-mono: 'Courier New', Courier, monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-serif);
+      font-size: 15px;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    .page {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* Header */
+    header {
+      padding: 60px 0 20px;
+      border-bottom: 2px solid var(--text);
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: normal;
+      letter-spacing: 0.02em;
+      font-variant: small-caps;
+    }
+
+    .header-contact {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .header-contact a { color: var(--text-secondary); }
+    .header-contact a:hover { color: var(--accent); }
+
+    .header-subtitle {
+      margin-top: 8px;
+      font-size: 15px;
+      font-style: italic;
+      color: var(--text-secondary);
+      padding-bottom: 4px;
+    }
+
+    /* Sections */
+    section {
+      padding: 28px 0 20px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    section:last-of-type { border-bottom: none; }
+
+    .section-heading {
+      font-size: 14px;
+      font-weight: bold;
+      font-variant: small-caps;
+      letter-spacing: 0.06em;
+      color: var(--text);
+      margin-bottom: 16px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--rule-light);
+    }
+
+    .section-number {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-light);
+      margin-right: 8px;
+      font-variant: normal;
+    }
+
+    /* About (two-column) */
+    .about-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+
+    .about-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.75;
+    }
+
+    .about-text p + p { margin-top: 12px; }
+
+    /* Project list (CV style) */
+    .project-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .project-table tr {
+      border-bottom: 1px solid var(--rule-light);
+      vertical-align: top;
+    }
+
+    .project-table tr:last-child { border-bottom: none; }
+
+    .project-table td {
+      padding: 10px 0;
+    }
+
+    .project-year {
+      width: 80px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-light);
+      padding-right: 16px;
+    }
+
+    .project-name-cell {
+      width: 100px;
+      padding-right: 16px;
+    }
+
+    .project-name-link {
+      font-weight: bold;
+      font-size: 14px;
+      color: var(--text);
+      font-style: italic;
+    }
+
+    .project-name-link:hover { color: var(--accent); }
+
+    .project-detail {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .project-tech {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-light);
+      margin-top: 3px;
+    }
+
+    /* Category within projects */
+    .project-category {
+      font-size: 12px;
+      font-variant: small-caps;
+      letter-spacing: 0.06em;
+      color: var(--text-light);
+      padding: 16px 0 6px;
+      font-weight: bold;
+    }
+
+    .project-category:first-child { padding-top: 0; }
+
+    /* Links section */
+    .links-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .links-list li {
+      font-size: 14px;
+      color: var(--text-secondary);
+      padding: 4px 0;
+    }
+
+    .links-list li::before {
+      content: '\2014\00a0';
+      color: var(--text-light);
+    }
+
+    /* Footer */
+    footer {
+      padding: 28px 0 48px;
+      border-top: 2px solid var(--text);
+      margin-top: 8px;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    .footer-inner a { color: var(--text-light); }
+    .footer-inner a:hover { color: var(--accent); }
+
+    /* Print style */
+    @media print {
+      body { font-size: 11pt; }
+      .page { max-width: none; padding: 0; }
+      a { color: var(--text); }
+      header, footer { break-inside: avoid; }
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      header { padding: 36px 0 16px; }
+      .page { padding: 0 20px; }
+      .about-columns { grid-template-columns: 1fr; gap: 12px; }
+      .project-year { width: 56px; font-size: 11px; }
+      .project-name-cell { width: 80px; }
+
+      .header-top {
+        flex-direction: column;
+        gap: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page">
+
+    <!-- Header -->
+    <header>
+      <div class="header-top">
+        <h1>Bjorn Stabell</h1>
+        <div class="header-contact">
+          <a href="https://github.com/beorn" target="_blank" rel="noopener">github.com/beorn</a>
+        </div>
+      </div>
+      <div class="header-subtitle">
+        Software engineer &mdash; terminal UIs, developer tools, and agentic systems
+      </div>
+    </header>
+
+    <!-- 1. About -->
+    <section>
+      <div class="section-heading"><span class="section-number">1.</span>About</div>
+      <div class="about-columns">
+        <div class="about-text">
+          <p>
+            I write software for the command line &mdash; tools that stay out of your way and do
+            exactly what you need. My current focus is the terminal UI layer: making it fast,
+            composable, and testable.
+          </p>
+        </div>
+        <div class="about-text">
+          <p>
+            Most of my open-source work lives in the terminal ecosystem: a React-based TUI
+            framework, a pure-JS flexbox engine, a headless terminal library, and a universal color
+            theme system. On top of that I'm building km &mdash; a knowledge machine for agentic
+            knowledge workers.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Selected Projects -->
+    <section>
+      <div class="section-heading"><span class="section-number">2.</span>Selected Projects</div>
+
+      <div class="project-category">Terminal Ecosystem</div>
+
+      <table class="project-table">
+        <tr>
+          <td class="project-year">2024&ndash;</td>
+          <td class="project-name-cell">
+            <a class="project-name-link" href="https://hightea.dev" target="_blank" rel="noopener">hightea</a>
+          </td>
+          <td class="project-detail">
+            React for modern terminals &mdash; layout feedback, mouse, images, 100x+ faster incremental updates, zero WASM.
+            <div class="project-tech">TypeScript, React, TUI</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="project-year">2024&ndash;</td>
+          <td class="project-name-cell">
+            <a class="project-name-link" href="https://github.com/beorn/flexture" target="_blank" rel="noopener">flexture</a>
+          </td>
+          <td class="project-detail">
+            Pure JavaScript flexbox layout engine &mdash; Yoga-compatible API, 2.5x faster initial layout, 5.5x faster re-layout, zero WASM.
+            <div class="project-tech">TypeScript, Layout, Flexbox</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="project-year">2024&ndash;</td>
+          <td class="project-name-cell">
+            <a class="project-name-link" href="https://termless.dev" target="_blank" rel="noopener">termless</a>
+          </td>
+          <td class="project-detail">
+            Headless terminal library for cross-terminal TUI testing &mdash; run your TUI in CI without a real terminal.
+            <div class="project-tech">TypeScript, Testing, Terminal</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="project-year">2025&ndash;</td>
+          <td class="project-name-cell">
+            <a class="project-name-link" href="https://github.com/beorn/swatch" target="_blank" rel="noopener">swatch</a>
+          </td>
+          <td class="project-detail">
+            Universal color themes for any platform &mdash; terminal, web, and native apps from a single theme definition.
+            <div class="project-tech">TypeScript, Theming, Color</div>
+          </td>
+        </tr>
+      </table>
+
+      <div class="project-category">Applications</div>
+
+      <table class="project-table">
+        <tr>
+          <td class="project-year">2024&ndash;</td>
+          <td class="project-name-cell">
+            <a class="project-name-link" href="https://github.com/beorn/pim" target="_blank" rel="noopener">km</a>
+          </td>
+          <td class="project-detail">
+            Knowledge Machine &mdash; unified notes, tasks, and calendar TUI with full history and bidirectional markdown sync. Built for agentic knowledge workers.
+            <div class="project-tech">TypeScript, Bun, SQLite, TUI</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="project-year">2025&ndash;</td>
+          <td class="project-name-cell">
+            <a class="project-name-link" href="https://github.com/beorn/pim" target="_blank" rel="noopener">pam</a>
+          </td>
+          <td class="project-detail">
+            Personal Assistant Machine &mdash; multi-channel AI assistant with CRDT sandboxing for safe, composable automation.
+            <div class="project-tech">TypeScript, AI, CRDT</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="project-year">2025&ndash;</td>
+          <td class="project-name-cell">
+            <a class="project-name-link" href="https://github.com/beorn/pim" target="_blank" rel="noopener">cloudi</a>
+          </td>
+          <td class="project-detail">
+            Claude AI chat CLI and autonomous mail bot &mdash; conversation in the terminal, with background agents that handle email.
+            <div class="project-tech">TypeScript, Claude API, Gmail</div>
+          </td>
+        </tr>
+      </table>
+    </section>
+
+    <!-- 3. Links -->
+    <section>
+      <div class="section-heading"><span class="section-number">3.</span>Links</div>
+      <ul class="links-list">
+        <li><a href="https://github.com/beorn" target="_blank" rel="noopener">GitHub</a> &mdash; github.com/beorn</li>
+        <li><a href="https://hightea.dev" target="_blank" rel="noopener">hightea documentation</a> &mdash; hightea.dev</li>
+        <li><a href="https://termless.dev" target="_blank" rel="noopener">termless documentation</a> &mdash; termless.dev</li>
+      </ul>
+    </section>
+
+  </div>
+
+  <footer>
+    <div class="page">
+      <div class="footer-inner">
+        <span>Bjorn Stabell</span>
+        <a href="https://github.com/beorn" target="_blank" rel="noopener">github.com/beorn</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
