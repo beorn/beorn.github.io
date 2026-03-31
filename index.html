@@ -332,9 +332,12 @@
           Also co-created XPilot, one of the first multiplayer internet action games (1991).
         </p>
         <p>
-          Currently building AI products and open-source infrastructure for the terminal:
-          Silvery (React terminal UI framework), Flexily (pure-JS flexbox engine),
-          Termless (headless terminal testing), and Loggily (debug + structured logging).
+          Currently building AI products and open-source infrastructure for the terminal ecosystem:
+          <a href="https://silvery.dev">Silvery</a> (React TUI framework),
+          <a href="https://terminfo.dev">terminfo.dev</a> (terminal compatibility database),
+          <a href="https://termless.dev">Termless</a> (headless terminal testing),
+          <a href="https://beorn.codes/flexily">Flexily</a> (flexbox layout engine),
+          and <a href="https://github.com/beorn/bearly">Tribe</a> (multi-agent coordination for Claude Code).
         </p>
       </div>
     </div>
@@ -393,12 +396,12 @@
           </div>
         </a>
 
-        <div class="category-label">Open Source</div>
+        <div class="category-label">Open Source &mdash; Terminal Ecosystem</div>
 
         <a class="project-item" href="https://silvery.dev" target="_blank" rel="noopener">
           <div class="project-name">Silvery</div>
           <div class="project-meta">
-            <div class="project-desc">React framework for terminal UIs &mdash; layout feedback during render, scrollable containers, per-node dirty tracking, 30+ components, themes, mouse support.</div>
+            <div class="project-desc">React framework for terminal UIs &mdash; 30+ components, per-node dirty tracking (100x+ faster than Ink), themes, mouse support.</div>
             <div class="project-tags">
               <span class="tag">TypeScript</span>
               <span class="tag">React</span>
@@ -407,14 +410,14 @@
           </div>
         </a>
 
-        <a class="project-item" href="https://flexily.dev" target="_blank" rel="noopener">
-          <div class="project-name">Flexily</div>
+        <a class="project-item" href="https://terminfo.dev" target="_blank" rel="noopener">
+          <div class="project-name">terminfo.dev</div>
           <div class="project-meta">
-            <div class="project-desc">Pure JavaScript flexbox layout engine &mdash; Yoga-compatible API, zero WASM, zero allocation.</div>
+            <div class="project-desc">The &ldquo;caniuse.com for terminal emulators&rdquo; &mdash; automated compatibility testing for 161 features across 19 terminals. Powered by Termless.</div>
             <div class="project-tags">
-              <span class="tag">TypeScript</span>
-              <span class="tag">Layout</span>
-              <span class="tag">Flexbox</span>
+              <span class="tag">VitePress</span>
+              <span class="tag">Compatibility</span>
+              <span class="tag">Database</span>
             </div>
           </div>
         </a>
@@ -422,7 +425,7 @@
         <a class="project-item" href="https://termless.dev" target="_blank" rel="noopener">
           <div class="project-name">Termless</div>
           <div class="project-meta">
-            <div class="project-desc">Headless terminal testing &mdash; like Playwright, but for terminal apps. 6 backends, 21+ matchers.</div>
+            <div class="project-desc">Headless terminal testing &mdash; like Playwright, but for terminal apps. 10 backends, 21+ matchers. Includes <a href="https://github.com/beorn/vterm">vterm.js</a> (100% feature coverage) and <a href="https://github.com/beorn/vterm/tree/main/packages/vt100">vt100.js</a> (VT220-era baseline).</div>
             <div class="project-tags">
               <span class="tag">TypeScript</span>
               <span class="tag">Testing</span>
@@ -431,10 +434,36 @@
           </div>
         </a>
 
-        <a class="project-item" href="https://loggily.dev" target="_blank" rel="noopener">
+        <a class="project-item" href="https://beorn.codes/flexily" target="_blank" rel="noopener">
+          <div class="project-name">Flexily</div>
+          <div class="project-meta">
+            <div class="project-desc">Pure JavaScript flexbox layout engine &mdash; Yoga-compatible API, 1.5-5.5x faster, zero WASM. Pretext integration (alpha) for rich text layout.</div>
+            <div class="project-tags">
+              <span class="tag">TypeScript</span>
+              <span class="tag">Layout</span>
+              <span class="tag">Flexbox</span>
+            </div>
+          </div>
+        </a>
+
+        <div class="category-label">Open Source &mdash; Developer Tools</div>
+
+        <a class="project-item" href="https://github.com/beorn/bearly" target="_blank" rel="noopener">
+          <div class="project-name">Tribe</div>
+          <div class="project-meta">
+            <div class="project-desc">Multi-agent coordination for Claude Code &mdash; cross-session messaging, work tracking, and parallel task orchestration via MCP.</div>
+            <div class="project-tags">
+              <span class="tag">TypeScript</span>
+              <span class="tag">AI Agents</span>
+              <span class="tag">MCP</span>
+            </div>
+          </div>
+        </a>
+
+        <a class="project-item" href="https://beorn.codes/loggily" target="_blank" rel="noopener">
           <div class="project-name">Loggily</div>
           <div class="project-meta">
-            <div class="project-desc">One library instead of three &mdash; debug, structured logging, and tracing unified with a clean API. ~3KB, zero dependencies.</div>
+            <div class="project-desc">One library instead of three &mdash; debug, structured logging, and tracing unified. ~3KB, zero dependencies. Used by Silvery, Termless, and terminfo.dev.</div>
             <div class="project-tags">
               <span class="tag">TypeScript</span>
               <span class="tag">Logging</span>
@@ -443,13 +472,12 @@
         </a>
 
         <div class="project-item">
-          <div class="project-name" style="text-decoration: none; color: var(--text);">Misc</div>
+          <div class="project-name" style="text-decoration: none; color: var(--text);">More</div>
           <div class="project-meta">
-            <div class="project-desc"><a href="https://beorn.github.io/mdtest">mdtest</a> &mdash; write tests in markdown, run them as code. <a href="https://github.com/beorn/vi-monkey">vi-monkey</a> &mdash; fuzz testing and chaos streams for Vitest. <a href="https://github.com/beorn/mostlydb">mostlydb</a> &mdash; MongoDB queries over any storage backend.</div>
+            <div class="project-desc"><a href="https://beorn.codes/mdspec">mdspec</a> &mdash; executable markdown testing. <a href="https://github.com/beorn/vimonkey">vimonkey</a> &mdash; fuzz testing for Vitest. <a href="https://github.com/beorn/accountly">accountly</a> &mdash; LLM API cost tracking. <a href="https://github.com/beorn/mostlydb">mostlydb</a> &mdash; MongoDB queries over any storage backend.</div>
             <div class="project-tags">
               <span class="tag">TypeScript</span>
               <span class="tag">Testing</span>
-              <span class="tag">Database</span>
             </div>
           </div>
         </div>
